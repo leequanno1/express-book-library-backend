@@ -21,22 +21,27 @@ function errorResponseHandler(res, err ) {
     res.status(500).json({message: err.message})
 }
 
-async function validatorAdminHandler(req, res,callback) {
+async function validatorAdminHandler(req, res, callback) {
     if(VALIDATE_URL) {
-        let validateRes = await fetch(`${VALIDATE_URL}/v3/validate`, {
-            method: "POST",
-            headers: req.headers,
-        });
-        if(validateRes.status === 200){
-            role = (await validateRes.json()).payload.role;
-            if(role === "admin"){
-                await callback(req,res);
+        try {
+            let validateRes = await fetch(`${VALIDATE_URL}/v3/validate`, {
+                method: "POST",
+                headers: req.headers,
+            });
+            if(validateRes.status === 200){
+                role = (await validateRes.json()).payload.role;
+                if(role === "admin"){
+                    await callback(req,res);
+                    return;
+                }
+                res.status(403).json({message: 'Fobident'});
                 return;
             }
-            res.status(403).json({message: 'Fobident'});
+            res.status(401).json({message: 'Access denined'});
+        } catch(err) {
+            res.status(500).json({message: 'Validation host URL exception'});
             return;
         }
-        res.status(401).json({message: 'Access denined'});
     }
     res.status(500).json({message: 'Validation host URL error'});
 }

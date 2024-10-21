@@ -3,6 +3,7 @@ const responseService = require("../services/response.service")
 const resHandler = responseService.responseHandler;
 const errResponseHandler = responseService.errorResponseHandler;
 const validatorAdminHandler = responseService.validatorAdminHandler;
+const fileToFileName = require("../services/image-uploader.service").fileToFileName;
 
 class BookCommandController {
 
@@ -10,10 +11,17 @@ class BookCommandController {
     async updateBook(req, res) {
         await validatorAdminHandler(req, res, async (req, res) => {
             const data = req.body;
+            const updateData = {
+                ...data,
+                genre: JSON.parse(data.genre),
+                price: Number(data.price),
+                previous_price: Number(data.previous_price),
+                image_url: fileToFileName(req.files)
+            }
             try {
                 const result = await Book.findByIdAndUpdate(
-                    data?.id,
-                    data,
+                    updateData?._id,
+                    updateData,
                     {new: true}
                 );
                 resHandler(res, result);
@@ -27,10 +35,17 @@ class BookCommandController {
     async createBook(req, res) {
         await validatorAdminHandler(req, res, async (req,res) => {
             const data = req.body;
+            const updateData = {
+                ...data,
+                genre: JSON.parse(data.genre),
+                price: Number(data.price),
+                previous_price: Number(data.previous_price),
+                image_url: fileToFileName(req.files)
+            }
             try {
-                const newBook = new Book(data);
-                await newBook.save();
-                resHandler(res, {message: 'Create ok'});
+                const newBook = new Book(updateData);
+                const result = await newBook.save();
+                resHandler(res, result);
             } catch(err) {
                 errResponseHandler(res, err);
             }

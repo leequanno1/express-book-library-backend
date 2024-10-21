@@ -9,7 +9,7 @@ const Book = new Schema({
     description: {type: String},
     price: {type: Number, default: 0},
     previous_price: {type: Number, default: 0},
-    image_url: {type: String, default: "random_url.img"}
+    image_url: {type: Array, default: []}
 }) 
 
 module.exports = mongoose.model("Book",Book);

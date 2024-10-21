@@ -25,6 +25,13 @@ class BookController{
         const total = await Book.countDocuments();
         res.status(200).json({total: total})
     }
+
+    // [GET] /books/get-by-id?id=
+    async getById(req, res) {
+        const {id} = req.query;
+        const book = await Book.findOne({_id: id});
+        resHandler(res,book);
+    }
 }
 
 module.exports = new BookController();
