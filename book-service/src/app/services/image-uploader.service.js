@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
 
 function fileToFileName(files) {
     if(Array.isArray(files)) {
-        return files.map(file => `/upload/${file.filename}`);
+        return files.map(file => `/public/${file.filename}`);
     }
     return [`/upload/${files.filename}`];
 }

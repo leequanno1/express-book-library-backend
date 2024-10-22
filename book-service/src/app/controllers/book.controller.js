@@ -32,6 +32,13 @@ class BookController{
         const book = await Book.findOne({_id: id});
         resHandler(res,book);
     }
+
+    async getByTitle(req,res) {
+        const {title} = req.query;
+        console.log(title);
+        const books = await Book.find({title: {$regex: '.*' + title + '.*'}});
+        resHandler(res,books);
+    }
 }
 
 module.exports = new BookController();

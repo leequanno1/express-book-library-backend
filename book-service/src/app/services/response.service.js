@@ -14,7 +14,7 @@ function responseHandler(res, body) {
         res.status(200).json(body)
         return;
     }
-    res.status(400).json({message: "Not found"});
+    res.status(404).json({message: "Not found"});
 }
 
 function errorResponseHandler(res, err ) {

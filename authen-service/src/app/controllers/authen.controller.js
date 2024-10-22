@@ -127,6 +127,22 @@ class AuthenControllers {
       }
     });
   }
+
+  //   [GET] /v3/get-info
+  async getAccountInfo(req, res) {
+    tokenValidation(req, res, async (req,res,payload) => {
+      try {
+        const accountData = await Account.findById(payload.id,"_id username email fullname createdAt role");
+        if(accountData) {
+          res.status(200).json(accountData);
+          return;
+        }
+        res.status(404).json({message: "Account not found."})
+      } catch(err) {
+        res.status(500).json({message: "Internal server error."})
+      }
+    });
+  }
 }
 
 module.exports = new AuthenControllers();
