@@ -107,6 +107,8 @@ router.post("/login", controller.login);
  */
 router.post("/validate", controller.validate);
 
+router.post("/get-infos", controller.getUserInfos)
+
 /**
  * @swagger
  * /v3/update:
@@ -239,5 +241,7 @@ router.put("/change-password", controller.changePassword);
  *                   example: mymail@gmail.com
  */
 router.get("/get-info", controller.getAccountInfo);
+
+router.get("/get-total", controller.getTotalCount)
 
 module.exports = router;

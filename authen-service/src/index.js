@@ -7,6 +7,7 @@ const db = require("../config/dbconfig");
 const cors = require("cors");
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const globalErrorHandler = require("./app/middle-ware/global-middle-ware").globalErrorHandler
 
 dotenv.config();
 const port = process.env.PORT || 3000;
@@ -28,15 +29,14 @@ const swaggerOptions = {
   apis: ['./src/app/routes/*.js'],
 };
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
-
 app.use(express.json());
 app.use(morgan('combined'));
 app.use(cors({
   origin: frontEndHost
 }))
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-
 db.connect();
+app.use(globalErrorHandler);
 route(app);
 
 app.listen(port, () => {
