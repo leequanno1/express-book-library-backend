@@ -103,7 +103,7 @@ const upload = uploader.upload;
  *                   type: string
  *                   example: "abc"
  */
-router.put("/update", upload.array("image_url",10), controller.updateBook);
+router.put("/update", upload.array("imageFile",10), controller.updateBook);
 
 /**
  * @swagger
@@ -204,7 +204,9 @@ router.put("/update", upload.array("image_url",10), controller.updateBook);
  *                   type: string
  *                   example: "abc"
  */
-router.put("/create", upload.array("image_url",10), controller.createBook);
+router.put("/create", upload.array("imageFile",10), controller.createBook);
+
+router.put("/create-many", controller.createManyBook)
 
 /**
  * @swagger

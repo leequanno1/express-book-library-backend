@@ -22,13 +22,14 @@ class BookCommandController {
    *  totalCopies,
    *  description,
    *  imageFile,
-   *  imageUrl,
+   *  currentImageUrl,
    * }
    * @param {*} req 
    * @param {*} res 
    */
   async updateBook(req, res) {
     const reqBody = req.body;
+    reqBody.categoryIds = reqBody.categoryIds ? JSON.parse(reqBody.categoryIds) : [];
     const fileNames = fileToFileName(req.files);
     const objectIdList = reqBody.categoryIds.map(id => new mongoose.Types.ObjectId(id));
     try {
@@ -41,7 +42,7 @@ class BookCommandController {
         categorys : await BookCategory.find({ _id: { $in: objectIdList } }), 
         totalCopies : reqBody.totalCopies,
         description : reqBody.description,
-        imageUrl : (!fileNames || fileNames.length == 0)? [reqBody.imageUrl] : fileNames,
+        imageUrl : (!fileNames || fileNames.length == 0)? [reqBody.currentImageUrl] : fileNames,
         updatedAt : new Date(),
       }
       var book = await Book.findById(data.id,);
@@ -49,10 +50,8 @@ class BookCommandController {
         ...book,
         ...data,
       }
-      const result = await Book.findByIdAndUpdate(data._id, book, {
-        new: true
-      });
-      resHandler(res, result);
+      const result = await Book.findByIdAndUpdate(data._id, book);
+      resHandler(res, book);
     } catch (error) {
       errResponseHandler(res, err); 
     }
@@ -74,7 +73,8 @@ class BookCommandController {
    * @param {*} res 
    */
   async createBook(req, res) {
-    const reqBody = req.body;
+    let reqBody = req.body;
+    reqBody.categoryIds = reqBody.categoryIds ? JSON.parse(reqBody.categoryIds) : [];
     const fileNames = fileToFileName(req.files);
     const objectIdList = reqBody.categoryIds.map(id => new mongoose.Types.ObjectId(id));
     try {
@@ -95,13 +95,13 @@ class BookCommandController {
       const result = await newBook.save();
       let bookCopys = [];
       for (let i = 0; i < newBook.totalCopies; i++) {
-        bookCopys.append({
+        bookCopys.push({
           bookId: newBook._id,
           status: BookStatuses.AVAILABLE,
           location: "",
           updatedAt: new Date(),
           initDate: new Date(),
-          delFlg: fasle,
+          delFlg: false,
         })
       }
       await BookCopy.insertMany(bookCopys);
@@ -130,7 +130,7 @@ class BookCommandController {
    * @param {*} res 
    */
   async createManyBook(req, res) {
-    const { bookInfos } = req.body;
+    let { bookInfos } = req.body;
     if( !bookInfos || bookInfos.length === 0 ) {
       resHandler(res, {})
       return;
@@ -139,10 +139,10 @@ class BookCommandController {
       // get category id
       let categoryIds = [];
       bookInfos.forEach(book => {
-        categoryIds.push(book.categoryIds);
+        book.categoryIds.forEach(id => categoryIds.push(id));
       });
       // remove collap item 
-      const uniqueCategoryIds = [...new Set(array)].map(id => new mongoose.Types.ObjectId(id));
+      const uniqueCategoryIds = [...new Set(categoryIds)];
       const categories = await BookCategory.find({_id: {$in : uniqueCategoryIds}, delFlg : false});
       const newBookData = bookInfos.map((item) => {
         return {
@@ -150,7 +150,7 @@ class BookCommandController {
           author : item.author,
           publisher : item.publisher,
           year : item.year, 
-          categorys : categories.filter(cate => item.categoryIds.includes(cate._id)), 
+          categorys : categories.filter(cate => item.categoryIds.includes(cate._id.toString())), 
           totalCopies : item.totalCopies,
           description : item.description,
           updatedAt : new Date(),
@@ -161,10 +161,10 @@ class BookCommandController {
       // save book
       const bookRecords = await Book.insertMany(newBookData);
       // create book copies
-      const bookCopyData = [];
+      let bookCopyData = [];
       bookRecords.forEach(book => {
         for(let i = 0; i < book.totalCopies; i++) {
-          bookCopyData.append({
+          bookCopyData.push({
             bookId : book._id,
             status: BookStatuses.AVAILABLE,
             location: "",
