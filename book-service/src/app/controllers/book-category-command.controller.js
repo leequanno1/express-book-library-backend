@@ -21,8 +21,9 @@ class BookCategoryCommandController {
             return;
         }
         try {
-            const objectId = mongoose.Types.ObjectId(id);
+            const objectId = new mongoose.Types.ObjectId(id);
             const record = await BookCategory.findByIdAndUpdate(objectId, {categoryName : categoryName});
+            record.categoryName = categoryName;
             responseHandler(res, record);
         } catch (error) {
             errorResponseHandler(res, error);
@@ -39,8 +40,9 @@ class BookCategoryCommandController {
      */
     async createCategorys(req, res) {
         const {categoryNames} = req.body;
-        if(!categoryNames || categoryNames.length) {
-            responseHandler(req, {});
+        console.log(categoryNames);
+        if(!categoryNames || categoryNames.length === 0) {
+            responseHandler(res, {});
             return;
         }
         try {
@@ -69,15 +71,16 @@ class BookCategoryCommandController {
     async deleteCategorys(req, res) {
         const { categoryIds } = req.body;
         if(!categoryIds || categoryIds.length < 0){
-            responseHandler(req, {});
+            responseHandler(res, {});
             return;
         }
         try {
-            const objectIds = categoryIds.map(item => mongoose.Types.ObjectId(item));
+            const objectIds = categoryIds.map(item => new mongoose.Types.ObjectId(item));
             const records = await BookCategory.updateMany({_id: {$in: objectIds}}, {delFlg: true});
-            responseHandler(req, records);
+            const deletedRecord = await BookCategory.find({_id: {$in: objectIds}});
+            responseHandler(res, deletedRecord);
         } catch (error) {
-            errorResponseHandler(req, error);
+            errorResponseHandler(res, error);
         }
     }
 }
