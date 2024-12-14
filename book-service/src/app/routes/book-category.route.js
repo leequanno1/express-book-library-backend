@@ -4,11 +4,11 @@ const Controller = require("../controllers/book-category.controller")
 
 router.get("/get-all", Controller.getAll);
 
-router.get("/get-total", Controller.getTotal);
+router.get("/get-total", Controller.getTottal);
 
 router.get("/get-count", Controller.getCount);
 
-router.post("/get-by-ids", Controller.postGetByIds);
+router.get("/get-by-ids", Controller.getByIds);
 
 router.get("/get-by-name", Controller.getByName);
 
