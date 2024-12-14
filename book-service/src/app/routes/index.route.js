@@ -1,11 +1,19 @@
 const express = require('express');
 const booksRoute = require("./book.route");
 const booksCommandRoute = require("./book-command.route");
-const validatorAdminHandler = require("../services/response.service").validatorAdminHandler;
+const { libraryanValidation } = require("../middle-ware/libraryan-validation-middle-ware")
+const bookCategoryRoute = require("./book-category.route");
+const bookCategoryCommandRoute = require("./book-category.route");
+const bookCopyRoute = require("./book-copy.route");
+const bookCopyCommandRoute = require("./book-copy-command.route");
 
 function route(app) {
     app.use("/books", booksRoute);
-    app.use("/books-command", validatorAdminHandler , booksCommandRoute);
+    app.use("/books-command", libraryanValidation, booksCommandRoute);
+    app.use("/book-categories", bookCategoryRoute);
+    app.use("/book-categories-command", libraryanValidation, bookCategoryCommandRoute);
+    app.use("/book-copy", bookCopyRoute);
+    app.use("/book-copy-command", libraryanValidation, bookCopyCommandRoute);
     app.use('/public', express.static('public/images'));
 }
 

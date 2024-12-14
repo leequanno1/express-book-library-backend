@@ -3,25 +3,7 @@ dotenv.config();
 const VALIDATE_URL = process.env.VALIDATOR_API_URL || null;
 const { UserRoles } = require("../models/enums/user-role")
 
-function responseHandler(res, body) {
-    let isNullBody = true;
-    if (Array.isArray(body)) {
-        isNullBody = false
-    } else if (body !== null && typeof body === "object") {
-        isNullBody = false
-    }
-    if(!isNullBody) {
-        res.status(200).json(body)
-        return;
-    }
-    res.status(404).json({message: "Not found"});
-}
-
-function errorResponseHandler(res, err ) {
-    res.status(500).json({message: err.message})
-}
-
-async function validatorAdminHandler(req, res, next) {
+const libraryanValidation = async ( req, res, next ) => {
     if(VALIDATE_URL) {
         try {
             let validateRes = await fetch(`${VALIDATE_URL}/v3/validate`, {
@@ -30,7 +12,7 @@ async function validatorAdminHandler(req, res, next) {
             });
             if(validateRes.status === 200){
                 role = (await validateRes.json()).payload.roleId;
-                if(role === UserRoles.ADMIN){
+                if(role === UserRoles.LIBRARIAN){
                     next();
                     return;
                 }
@@ -47,4 +29,4 @@ async function validatorAdminHandler(req, res, next) {
     res.status(500).json({message: 'Validation host URL error'});
 }
 
-module.exports = {responseHandler, errorResponseHandler, validatorAdminHandler};
+module.exports = { libraryanValidation };

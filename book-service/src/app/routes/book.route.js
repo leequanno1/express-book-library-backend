@@ -164,6 +164,63 @@ router.get("/total", Controller.getTotal);
 
 /**
  * @swagger
+ * /books/get-by-title:
+ *   get:
+ *     tags:
+ *       - no authorized
+ *     summary: Get book details by name
+ *     description: Retrieve detailed information about a book using its name.
+ *     parameters:
+ *       - in: query
+ *         name: title
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The title of the book
+ *     responses:
+ *       200:
+ *         description: Successful response with book details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 price:
+ *                   type: number
+ *                   example: 0
+ *                 previous_price:
+ *                   type: number
+ *                   example: 0
+ *                 image_url:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                     example: "http://example.com/image1.jpg"
+ *                 _id:
+ *                   type: string
+ *                   example: "6715424b12cbc53974f1cc11"
+ *                 title:
+ *                   type: string
+ *                   example: "title1"
+ *                 author:
+ *                   type: string
+ *                   example: "author1"
+ *                 publisher:
+ *                   type: string
+ *                   example: "publisher1"
+ *                 genre:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                     example: "genre1"
+ *                 description:
+ *                   type: string
+ *                   example: "abc"
+*/
+router.get("/get-by-title", Controller.getByTitle);
+
+/**
+ * @swagger
  * /books/get-by-id:
  *   get:
  *     tags:
@@ -217,63 +274,9 @@ router.get("/total", Controller.getTotal);
  *                   type: string
  *                   example: "abc"
  */
-router.get("/get-by-id", Controller.getById);
+router.post("/post-get-by-id", Controller.getByIds);
 
-/**
- * @swagger
- * /books/get-by-title:
- *   get:
- *     tags:
- *       - no authorized
- *     summary: Get book details by name
- *     description: Retrieve detailed information about a book using its name.
- *     parameters:
- *       - in: query
- *         name: title
- *         required: true
- *         schema:
- *           type: string
- *         description: The title of the book
- *     responses:
- *       200:
- *         description: Successful response with book details
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 price:
- *                   type: number
- *                   example: 0
- *                 previous_price:
- *                   type: number
- *                   example: 0
- *                 image_url:
- *                   type: array
- *                   items:
- *                     type: string
- *                     example: "http://example.com/image1.jpg"
- *                 _id:
- *                   type: string
- *                   example: "6715424b12cbc53974f1cc11"
- *                 title:
- *                   type: string
- *                   example: "title1"
- *                 author:
- *                   type: string
- *                   example: "author1"
- *                 publisher:
- *                   type: string
- *                   example: "publisher1"
- *                 genre:
- *                   type: array
- *                   items:
- *                     type: string
- *                     example: "genre1"
- *                 description:
- *                   type: string
- *                   example: "abc"
- */
-router.get("/get-by-title", Controller.getByTitle);
+
+router.post("/post-get-by-category-ids", Controller.getByCategoryIds)
 
 module.exports = router;

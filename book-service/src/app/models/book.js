@@ -6,7 +6,7 @@ const Book = new Schema({
     author: {type: String, default: "unknow"},
     publisher: {type: String, default: "unknow"},
     year: {type: Number, default: 0},
-    categorys: {type: Array},
+    categorys: {type: Array, default: []},
     totalCopies: {type: Number, default: 0},
     description: {type: String},
     updatedAt: {type: Date, default: new Date()},

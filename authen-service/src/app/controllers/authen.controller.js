@@ -48,37 +48,72 @@ class AuthenControllers {
    * @returns
    */
   async register(req, res) {
-    var { userInfoList } = req.body; // is type [{username: string, email: string , fullname: string, roleId: number, phoneNumber: string }]
-    var newUserList = [];
-    var registerIds = userInfoList.map((item) => item.username);
-    // Find collap username
-    const users = (await User.find({ username: { $in: registerIds } })).map(
-      (item) => item.username
-    );
-    if (users.length > 0) {
-      // Remove collap input
-      userInfoList = userInfoList.filter(
-        (item) => !users.includes(item.username)
+    await tokenValidation(req, res, async (req, res, payload) => {
+      if (payload.roleId !== UserRole.ADMIN) {
+        res.status(403).json({ message: "FOBIDENT" });
+        return;
+      }
+      var { userInfoList } = req.body; // is type [{username: string, email: string , fullname: string, roleId: number, phoneNumber: string }]
+      var newUserList = [];
+      var registerIds = userInfoList.map((item) => item.username);
+      // Find collap username
+      const users = (await User.find({ username: { $in: registerIds } })).map(
+        (item) => item.username
       );
-    }
-
-    userInfoList.forEach((item) => {
-      const newUser = new User({
-        username: item.username,
-        password: encodeHmacSha256("1234567", secretKey),
-        fullname: item.fullname,
-        roleId: item.roleId,
-        updatedAt: new Date(),
-        phoneNumber: item.phoneNumber,
-        initDate: new Date(),
-        email: item.email,
-        isActivated: false,
-        delFlg: false,
+      if (users.length > 0) {
+        // Remove collap input
+        userInfoList = userInfoList.filter(
+          (item) => !users.includes(item.username)
+        );
+      }
+      userInfoList.forEach((item) => {
+        const newUser = new User({
+          username: item.username,
+          password: encodeHmacSha256("1234567", secretKey),
+          fullname: item.fullname,
+          roleId: item.roleId,
+          updatedAt: new Date(),
+          phoneNumber: item.phoneNumber,
+          initDate: new Date(),
+          email: item.email,
+          isActivated: false,
+          delFlg: false,
+        });
+        newUserList.push(newUser);
       });
-      newUserList.push(newUser);
+      await User.insertMany(newUserList);
+      res.status(200).json({ data: newUserList });
     });
-    await User.insertMany(newUserList);
-    res.status(200).json({ data: newUserList });
+    // var { userInfoList } = req.body; // is type [{username: string, email: string , fullname: string, roleId: number, phoneNumber: string }]
+    // var newUserList = [];
+    // var registerIds = userInfoList.map((item) => item.username);
+    // // Find collap username
+    // const users = (await User.find({ username: { $in: registerIds } })).map(
+    //   (item) => item.username
+    // );
+    // if (users.length > 0) {
+    //   // Remove collap input
+    //   userInfoList = userInfoList.filter(
+    //     (item) => !users.includes(item.username)
+    //   );
+    // }
+    // userInfoList.forEach((item) => {
+    //   const newUser = new User({
+    //     username: item.username,
+    //     password: encodeHmacSha256("123456", secretKey),
+    //     fullname: item.fullname,
+    //     roleId: item.roleId,
+    //     updatedAt: new Date(),
+    //     phoneNumber: item.phoneNumber,
+    //     initDate: new Date(),
+    //     email: item.email,
+    //     isActivated: false,
+    //     delFlg: false,
+    //   });
+    //   newUserList.push(newUser);
+    // });
+    // await User.insertMany(newUserList);
+    // res.status(200).json({ data: newUserList });
   }
 
   // [POST] /v3/login
@@ -95,7 +130,7 @@ class AuthenControllers {
     );
     if (account.length) {
       let payload = {
-        id: account[0].id,
+        id: account[0]._id,
         username: account[0].username,
         fullname: account[0].fullname,
         roleId: account[0].roleId,
