@@ -30,7 +30,7 @@ class BookCommandController {
   async updateBook(req, res) {
     const reqBody = req.body;
     const fileNames = fileToFileName(req.files);
-    const objectIdList = reqBody.categoryIds.map(id => mongoose.Types.ObjectId(id));
+    const objectIdList = reqBody.categoryIds.map(id => new mongoose.Types.ObjectId(id));
     try {
       const data = {
         _id : reqBody.id,
@@ -76,7 +76,7 @@ class BookCommandController {
   async createBook(req, res) {
     const reqBody = req.body;
     const fileNames = fileToFileName(req.files);
-    const objectIdList = reqBody.categoryIds.map(id => mongoose.Types.ObjectId(id));
+    const objectIdList = reqBody.categoryIds.map(id => new mongoose.Types.ObjectId(id));
     try {
       const data = {
         title : reqBody.title,
@@ -111,6 +111,76 @@ class BookCommandController {
     }
   }
 
+  // [PUT] /books-command/create-many
+  /**
+   * body {
+   *  bookInfos: [
+   *    {
+   *     title: string,
+   *     author: string,
+   *     publisher: string,
+   *     year: number, 
+   *     categoryIds : string[], 
+   *     totalCopies: number,
+   *     description: string,
+   *    }
+   *  ]
+   * }
+   * @param {*} req 
+   * @param {*} res 
+   */
+  async createManyBook(req, res) {
+    const { bookInfos } = req.body;
+    if( !bookInfos || bookInfos.length === 0 ) {
+      resHandler(res, {})
+      return;
+    }
+    try {
+      // get category id
+      let categoryIds = [];
+      bookInfos.forEach(book => {
+        categoryIds.push(book.categoryIds);
+      });
+      // remove collap item 
+      const uniqueCategoryIds = [...new Set(array)].map(id => new mongoose.Types.ObjectId(id));
+      const categories = await BookCategory.find({_id: {$in : uniqueCategoryIds}, delFlg : false});
+      const newBookData = bookInfos.map((item) => {
+        return {
+          title : item.title,
+          author : item.author,
+          publisher : item.publisher,
+          year : item.year, 
+          categorys : categories.filter(cate => item.categoryIds.includes(cate._id)), 
+          totalCopies : item.totalCopies,
+          description : item.description,
+          updatedAt : new Date(),
+          initDate : new Date(),
+          delFlg : false,
+        }
+      })
+      // save book
+      const bookRecords = await Book.insertMany(newBookData);
+      // create book copies
+      const bookCopyData = [];
+      bookRecords.forEach(book => {
+        for(let i = 0; i < book.totalCopies; i++) {
+          bookCopyData.append({
+            bookId : book._id,
+            status: BookStatuses.AVAILABLE,
+            location: "",
+            updatedAt: new Date(),
+            initDate : new Date(),
+            delFlg : false,
+          })
+        }
+      })
+      await BookCopy.insertMany(bookCopyData);
+      resHandler(res, bookRecords);
+    } catch (error) {
+      errResponseHandler(res, error);
+    }
+  }
+
   // [DELETE] /books-command/delete
   /**
    * body {
@@ -125,7 +195,7 @@ class BookCommandController {
       resHandler(res, {});
       return;
     }
-    const objectIdList = ids.map(id => mongoose.Types.ObjectId(id));
+    const objectIdList = ids.map(id => new mongoose.Types.ObjectId(id));
     try {
       const result = await Book.updateMany(
         { _id: { $in: objectIdList } }, 
