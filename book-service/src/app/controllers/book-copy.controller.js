@@ -30,7 +30,7 @@ class BookCopyController {
             return;
         }
         try {
-            const objectIds = ids.map(id => mongoose.Types.ObjectId(id));
+            const objectIds = ids.map(id => new mongoose.Types.ObjectId(id));
             const records = await BookCopy.find({_id : {$in : objectIds}, delFlg: false});
             responseHandler(res, records);
         } catch (error) {
@@ -53,9 +53,9 @@ class BookCopyController {
             return;
         }
         try {
-            const objectId = mongoose.Types.ObjectId(bookId);
+            const objectId = new mongoose.Types.ObjectId(bookId);
             const record = await BookCopy.countDocuments({bookId: objectId, delFlg: false});
-            responseHandler(res, record);
+            responseHandler(res, {total: record});
         } catch (error) {
             errorResponseHandler(res, error);
         }
@@ -76,13 +76,28 @@ class BookCopyController {
             return;
         }
         try {
-            const objectId = mongoose.Types.ObjectId(copyId);
+            const objectId = new mongoose.Types.ObjectId(copyId);
             const copyRecord = await BookCopy.findById(objectId);
+            if(!copyRecord) {
+                responseHandler(res, {});
+                return;
+            }
             const bookId = copyRecord.bookId;
             const bookRecord = await Book.findById(bookId);
             const result = {
-                ...bookRecord,
-                ...copyRecord,
+                _id: copyRecord._id,
+                title: bookRecord.title,
+                author: bookRecord.author,
+                year: bookRecord.year,
+                categorys: bookRecord.categorys,
+                totalCopies: bookRecord.totalCopies,
+                description: bookRecord.description,
+                imageUrl: bookRecord.imageUrl,
+                initDate: bookRecord.initDate,
+                delFlg: copyRecord.delFlg,
+                status: copyRecord.status,
+                location: copyRecord.location,
+                updatedAt: copyRecord.updatedAt,
             }
             responseHandler(res, result);
         } catch (error) {
