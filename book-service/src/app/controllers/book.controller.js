@@ -15,7 +15,7 @@ class BookController {
     }
   }
 
-  // [GET] /books/get
+  // [GET] /books/get_count
   /**
    * param {
    *    page: number,
@@ -65,7 +65,7 @@ class BookController {
       resHandler(res, {});
       return;
     }
-    const objectIdList = ids.map((id) => mongoose.Types.ObjectId(id));
+    const objectIdList = ids.map((id) => new mongoose.Types.ObjectId(id));
     try {
       const books = await Book.find({
         _id: { $in: objectIdList },
@@ -113,20 +113,21 @@ class BookController {
    * @returns
    */
   async getByCategoryIds(req, res) {
-    const { categoryIds } = req.body;
+    let { categoryIds } = req.body;
     if (!categoryIds || categoryIds.length == 0) {
       resHandler(res, {});
       return;
     }
     try {
+      const objectIdCategoryIds = categoryIds.map(id => new mongoose.Types.ObjectId(id));
       const records = await Book.find({
         categorys: {
-          $elemMatch: {
-            _id: { $in: categoryIds },
-          },
+            $elemMatch: {
+                _id: { $in: objectIdCategoryIds },
+            },
         },
         delFlg: false
-      });
+    });
       resHandler(res, records);
     } catch (error) {
       errorHandler(res, error);

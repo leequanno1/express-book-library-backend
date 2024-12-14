@@ -3,7 +3,7 @@ const booksRoute = require("./book.route");
 const booksCommandRoute = require("./book-command.route");
 const { libraryanValidation } = require("../middle-ware/libraryan-validation-middle-ware")
 const bookCategoryRoute = require("./book-category.route");
-const bookCategoryCommandRoute = require("./book-category.route");
+const bookCategoryCommandRoute = require("./book-category-command.route");
 const bookCopyRoute = require("./book-copy.route");
 const bookCopyCommandRoute = require("./book-copy-command.route");
 
