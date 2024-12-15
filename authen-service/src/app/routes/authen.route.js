@@ -109,6 +109,14 @@ router.post("/validate", controller.validate);
 
 router.post("/get-infos", controller.getUserInfos)
 
+router.post("/get-admin-infos", controller.getAdminInfos)
+
+router.post("/get-librarian-infos", controller.getLibrarianInfos)
+
+router.post("/get-reader-infos", controller.getReaderInfos)
+
+router.post("/find-user-infos-by-fullname", controller.findUserInfosByFullName)
+
 /**
  * @swagger
  * /v3/update:

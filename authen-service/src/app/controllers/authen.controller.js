@@ -69,7 +69,7 @@ class AuthenControllers {
       userInfoList.forEach((item) => {
         const newUser = new User({
           username: item.username,
-          password: encodeHmacSha256("1234567", secretKey),
+          password: encodeHmacSha256("12345678", secretKey),
           fullname: item.fullname,
           roleId: item.roleId,
           updatedAt: new Date(),
@@ -84,36 +84,6 @@ class AuthenControllers {
       await User.insertMany(newUserList);
       res.status(200).json({ data: newUserList });
     });
-    // var { userInfoList } = req.body; // is type [{username: string, email: string , fullname: string, roleId: number, phoneNumber: string }]
-    // var newUserList = [];
-    // var registerIds = userInfoList.map((item) => item.username);
-    // // Find collap username
-    // const users = (await User.find({ username: { $in: registerIds } })).map(
-    //   (item) => item.username
-    // );
-    // if (users.length > 0) {
-    //   // Remove collap input
-    //   userInfoList = userInfoList.filter(
-    //     (item) => !users.includes(item.username)
-    //   );
-    // }
-    // userInfoList.forEach((item) => {
-    //   const newUser = new User({
-    //     username: item.username,
-    //     password: encodeHmacSha256("123456", secretKey),
-    //     fullname: item.fullname,
-    //     roleId: item.roleId,
-    //     updatedAt: new Date(),
-    //     phoneNumber: item.phoneNumber,
-    //     initDate: new Date(),
-    //     email: item.email,
-    //     isActivated: false,
-    //     delFlg: false,
-    //   });
-    //   newUserList.push(newUser);
-    // });
-    // await User.insertMany(newUserList);
-    // res.status(200).json({ data: newUserList });
   }
 
   // [POST] /v3/login
@@ -243,10 +213,129 @@ class AuthenControllers {
     tokenValidation(req, res, async (req, res, payload) => {
       if (payload.roleId == UserRole.ADMIN) {
         let { page, recordsPerPage } = req.body;
+        if( !page ) page = 1;
+        if( !recordsPerPage ) recordsPerPage = 1;
         page = Math.max(1, page);
         recordsPerPage = Math.max(1, recordsPerPage);
         const skip = (page - 1) * recordsPerPage;
-        const users = await User.find()
+        const users = await User
+          .find({delFlg: false})
+          .skip(skip)
+          .limit(recordsPerPage)
+          .sort({ updatedAt: -1 });
+        res.status(200).json({ data: users });
+      } else {
+        res.status(403).json({ message: "Fobident" });
+      }
+    });
+  }
+
+  // [POST] "/v3/get-infos"
+  /**
+   * Body: { page: number, recordsPerPage: number }
+   * @param {*} req
+   * @param {*} res
+   */
+  async getAdminInfos(req, res) {
+    tokenValidation(req, res, async (req, res, payload) => {
+      if (payload.roleId == UserRole.ADMIN) {
+        let { page, recordsPerPage } = req.body;
+        if( !page ) page = 1;
+        if( !recordsPerPage ) recordsPerPage = 1;
+        page = Math.max(1, page);
+        recordsPerPage = Math.max(1, recordsPerPage);
+        const skip = (page - 1) * recordsPerPage;
+        const users = await User
+          .find({roleId: UserRole.ADMIN, delFlg: false})
+          .skip(skip)
+          .limit(recordsPerPage)
+          .sort({ updatedAt: -1 });
+        res.status(200).json({ data: users });
+      } else {
+        res.status(403).json({ message: "Fobident" });
+      }
+    });
+  }
+  
+  // [POST] "/v3/get-infos"
+  /**
+   * Body: { page: number, recordsPerPage: number }
+   * @param {*} req
+   * @param {*} res
+   */
+  async getLibrarianInfos(req, res) {
+    tokenValidation(req, res, async (req, res, payload) => {
+      if (payload.roleId == UserRole.ADMIN) {
+        let { page, recordsPerPage } = req.body;
+        if( !page ) page = 1;
+        if( !recordsPerPage ) recordsPerPage = 1;
+        page = Math.max(1, page);
+        recordsPerPage = Math.max(1, recordsPerPage);
+        const skip = (page - 1) * recordsPerPage;
+        const users = await User
+          .find({roleId: UserRole.LIBRARIAN, delFlg: false})
+          .skip(skip)
+          .limit(recordsPerPage)
+          .sort({ updatedAt: -1 });
+        res.status(200).json({ data: users });
+      } else {
+        res.status(403).json({ message: "Fobident" });
+      }
+    });
+  }
+
+  // [POST] "/v3/get-infos"
+  /**
+   * Body: { page: number, recordsPerPage: number }
+   * @param {*} req
+   * @param {*} res
+   */
+  async getReaderInfos(req, res) {
+    tokenValidation(req, res, async (req, res, payload) => {
+      if (payload.roleId == UserRole.ADMIN) {
+        let { page, recordsPerPage } = req.body;
+        if( !page ) page = 1;
+        if( !recordsPerPage ) recordsPerPage = 1;
+        page = Math.max(1, page);
+        recordsPerPage = Math.max(1, recordsPerPage);
+        const skip = (page - 1) * recordsPerPage;
+        const users = await User
+          .find({roleId: UserRole.READER, delFlg: false})
+          .skip(skip)
+          .limit(recordsPerPage)
+          .sort({ updatedAt: -1 });
+        res.status(200).json({ data: users });
+      } else {
+        res.status(403).json({ message: "Fobident" });
+      }
+    });
+  }
+
+  // [POST] "/v3/get-infos"
+  /**
+   * Body: { 
+   *  fullName: string, 
+   *  page: number, 
+   *  recordsPerPage: number 
+   * }
+   * @param {*} req
+   * @param {*} res
+   */
+  async findUserInfosByFullName(req, res) {
+    tokenValidation(req, res, async (req, res, payload) => {
+      if (payload.roleId == UserRole.ADMIN) {
+        let { fullName, page, recordsPerPage } = req.body;
+        if( !page ) page = 1;
+        if( !recordsPerPage ) recordsPerPage = 1;
+        if( !fullName || fullName === "" ) {
+          res.status(400).json({ message: "Bad request" });
+          return;
+        }
+        page = Math.max(1, page);
+        recordsPerPage = Math.max(1, recordsPerPage);
+        const skip = (page - 1) * recordsPerPage;
+        const users = await User
+          .find({fullname: { $regex: fullName, $options: 'i' }, delFlg: false})
           .skip(skip)
           .limit(recordsPerPage)
           .sort({ updatedAt: -1 });
@@ -273,11 +362,22 @@ class AuthenControllers {
           roleId: UserRole.READER,
           delFlg: false,
         });
+        const total = adminTotal + librarianTotal + readerTotal;
+        const adminPercent = (adminTotal * 100.0)/total;
+        const librarianPercent = (librarianTotal * 100.0)/total;
+        const readerPercent = (readerTotal * 100.0)/total;
         res.status(200).json({
           data: {
-            adminTotal: adminTotal,
-            librarianTotal: librarianTotal,
-            readerTotal: readerTotal,
+            total: {
+              adminTotal: adminTotal,
+              librarianTotal: librarianTotal,
+              readerTotal: readerTotal,
+            },
+            percent: {
+              adminPercent: adminPercent,
+              librarianPercent: librarianPercent,
+              readerPercent: readerPercent
+            }
           },
         });
       } else {
