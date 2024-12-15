@@ -3,29 +3,29 @@ const Loan = require("../models/loan");
 
 /**
  *
- * @param {String} readerId
+ * @param {String} readerUsername
  * @param {Number} month
  * @param {Number} year
  * @returns {Promise<number>} number
  */
-const handleGetBorrowedTotal = async (readerId, month = null, year = null) => {
-  if (!readerId || readerId === "") {
+const handleGetBorrowedTotal = async (readerUsername, month = null, year = null) => {
+  const currentDate = new Date();
+  if (!readerUsername || readerUsername === "") {
     return 0;
   }
   if (!month || !year) {
     return await Loan.countDocuments({
-      readerId: readerId,
+      readerUsername: readerUsername,
       delFlg: false,
       status: LoanStatuses.BORROWED,
       dueDate: { $lt: currentDate },
     });
   }
-  const currentDate = new Date();
   const startOfNovember = new Date(year, month - 1, 1);
   const endOfNovember =
     month === 12 ? new Date(year + 1, 1, 1) : new Date(year, month, 1);
   return await Loan.countDocuments({
-    readerId: readerId,
+    readerUsername: readerUsername,
     delFlg: false,
     status: LoanStatuses.BORROWED,
     loanDate: {
@@ -38,7 +38,7 @@ const handleGetBorrowedTotal = async (readerId, month = null, year = null) => {
 
 /**
  *
- * @param {String} readerId
+ * @param {String} readerUsername
  * @param {Number} skip
  * @param {Number} limit
  * @param {Number} month
@@ -46,18 +46,19 @@ const handleGetBorrowedTotal = async (readerId, month = null, year = null) => {
  * @returns {Promise<Array>}
  */
 const handleGetBorrowed = async (
-  readerId,
+  readerUsername,
   skip,
   limit,
   month = null,
   year = null
 ) => {
-  if (!readerId || readerId === "") {
+  const currentDate = new Date();
+  if (!readerUsername || readerUsername === "") {
     return [];
   }
   if (!month || !year) {
     return await Loan.find({
-      readerId: readerId,
+      readerUsername: readerUsername,
       delFlg: false,
       status: LoanStatuses.BORROWED,
       dueDate: { $lt: currentDate },
@@ -65,12 +66,11 @@ const handleGetBorrowed = async (
       .skip(skip)
       .limit(limit);
   }
-  const currentDate = new Date();
   const startOfNovember = new Date(year, month - 1, 1);
   const endOfNovember =
     month === 12 ? new Date(year + 1, 1, 1) : new Date(year, month, 1);
   return await Loan.find({
-    readerId: readerId,
+    readerUsername: readerUsername,
     delFlg: false,
     status: LoanStatuses.BORROWED,
     loanDate: {
@@ -85,18 +85,18 @@ const handleGetBorrowed = async (
 
 /**
  *
- * @param {String} readerId
+ * @param {String} readerUsername
  * @param {Number} month
  * @param {Number} year
  * @returns {Promise<number>} number
  */
-const handleGetReturnedTotal = async (readerId, month, year) => {
-  if (!readerId || readerId === "") {
+const handleGetReturnedTotal = async (readerUsername, month, year) => {
+  if (!readerUsername || readerUsername === "") {
     return 0;
   }
   if (!month || !year) {
     return await Loan.countDocuments({
-      readerId: readerId,
+      readerUsername: readerUsername,
       delFlg: false,
       status: LoanStatuses.RETURNED,
     });
@@ -105,7 +105,7 @@ const handleGetReturnedTotal = async (readerId, month, year) => {
   const endOfNovember =
     month === 12 ? new Date(year + 1, 1, 1) : new Date(year, month, 1);
   return await Loan.countDocuments({
-    readerId: readerId,
+    readerUsername: readerUsername,
     delFlg: false,
     status: LoanStatuses.BORROWED,
     loanDate: {
@@ -117,7 +117,7 @@ const handleGetReturnedTotal = async (readerId, month, year) => {
 
 /**
  *
- * @param {String} readerId
+ * @param {String} readerUsername
  * @param {Number} skip
  * @param {Number} limit
  * @param {Number} month
@@ -125,18 +125,18 @@ const handleGetReturnedTotal = async (readerId, month, year) => {
  * @returns {Promise<Array>}
  */
 const handleGetReturned = async (
-  readerId,
+  readerUsername,
   skip,
   limit,
   month = null,
   year = null
 ) => {
-  if (!readerId || readerId === "") {
+  if (!readerUsername || readerUsername === "") {
     return [];
   }
   if (!month || !year) {
     return await Loan.find({
-      readerId: readerId,
+      readerUsername: readerUsername,
       delFlg: false,
       status: LoanStatuses.RETURNED,
     })
@@ -147,7 +147,7 @@ const handleGetReturned = async (
   const endOfNovember =
     month === 12 ? new Date(year + 1, 1, 1) : new Date(year, month, 1);
   return await Loan.find({
-    readerId: readerId,
+    readerUsername: readerUsername,
     delFlg: false,
     status: LoanStatuses.BORROWED,
     loanDate: {
@@ -161,18 +161,19 @@ const handleGetReturned = async (
 
 /**
  *
- * @param {String} readerId
+ * @param {String} readerUsername
  * @param {Number} month
  * @param {Number} year
  * @returns {Promise<number>} number
  */
-const handleGetOverdueTotal = async (readerId, month, year) => {
-  if (!readerId || readerId === "") {
+const handleGetOverdueTotal = async (readerUsername, month, year) => {
+  const currentDate = new Date();
+  if (!readerUsername || readerUsername === "") {
     return 0;
   }
   if (!month || !year) {
     return await Loan.countDocuments({
-      readerId: readerId,
+      readerUsername: readerUsername,
       delFlg: false,
       $or: [
         { status: LoanStatuses.OVERDUE },
@@ -180,12 +181,11 @@ const handleGetOverdueTotal = async (readerId, month, year) => {
       ],
     });
   }
-  const currentDate = new Date();
   const startOfNovember = new Date(year, month - 1, 1);
   const endOfNovember =
     month === 12 ? new Date(year + 1, 1, 1) : new Date(year, month, 1);
   return await Loan.countDocuments({
-    readerId: readerId,
+    readerUsername: readerUsername,
     delFlg: false,
     loanDate: {
       $gte: startOfNovember,
@@ -197,7 +197,7 @@ const handleGetOverdueTotal = async (readerId, month, year) => {
 
 /**
  *
- * @param {String} readerId
+ * @param {String} readerUsername
  * @param {Number} skip
  * @param {Number} limit
  * @param {Number} month
@@ -205,18 +205,19 @@ const handleGetOverdueTotal = async (readerId, month, year) => {
  * @returns {Promise<Array>}
  */
 const handleGetOverdue = async (
-  readerId,
+  readerUsername,
   skip,
   limit,
   month = null,
   year = null
 ) => {
-  if (!readerId || readerId === "") {
+  const currentDate = new Date();
+  if (!readerUsername || readerUsername === "") {
     return [];
   }
   if (!month || !year) {
     return await Loan.find({
-      readerId: readerId,
+      readerUsername: readerUsername,
       delFlg: false,
       $or: [
         { status: LoanStatuses.OVERDUE },
@@ -226,12 +227,11 @@ const handleGetOverdue = async (
       .skip(skip)
       .limit(limit);
   }
-  const currentDate = new Date();
   const startOfNovember = new Date(year, month - 1, 1);
   const endOfNovember =
     month === 12 ? new Date(year + 1, 1, 1) : new Date(year, month, 1);
   return await Loan.find({
-    readerId: readerId,
+    readerUsername: readerUsername,
     delFlg: false,
     loanDate: {
       $gte: startOfNovember,

@@ -3,9 +3,8 @@ const Schema = mongoose.Schema;
 const { LoanStatuses } = require("./enums/loan-status")
 
 const Loan = new Schema({
-  title: { type: String, default: "unknow" },
-  readerId: { type: String, default: "" },
-  librarianId: { type: String, default: "" },
+  readerUsername: { type: String, default: "" },
+  librarianUsername: { type: String, default: "" },
   book: {
     type: Object,
     default: {
@@ -29,7 +28,7 @@ const Loan = new Schema({
   dueDate: { type: Date, default: undefined },
   returnDate: { type: Date, default: undefined },
   status: { type: Number, default: LoanStatuses.BORROWED},
-  money: { type: Number, default: 0 },
+  money: { type: Number, default: undefined },
   initDate: { type: Date, default: new Date() },
   delFlg: { type: Boolean, default: false }
 });

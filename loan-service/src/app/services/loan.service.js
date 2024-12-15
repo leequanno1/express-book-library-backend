@@ -8,6 +8,7 @@ const Loan = require("../models/loan");
  * @returns {Promise<number>} number
  */
 const handleGetBorrowedTotal = async (month = null, year = null) => {
+  const currentDate = new Date();
   if (!month || !year) {
     return await Loan.countDocuments({
       delFlg: false,
@@ -15,7 +16,6 @@ const handleGetBorrowedTotal = async (month = null, year = null) => {
       dueDate: { $lt: currentDate },
     });
   }
-  const currentDate = new Date();
   const startOfNovember = new Date(year, month - 1, 1);
   const endOfNovember =
     month === 12 ? new Date(year + 1, 1, 1) : new Date(year, month, 1);
@@ -39,6 +39,7 @@ const handleGetBorrowedTotal = async (month = null, year = null) => {
  * @returns {Promise<Array>}
  */
 const handleGetBorrowed = async (skip, limit, month = null, year = null) => {
+  const currentDate = new Date();
   if (!month || !year) {
     return await Loan.find({
       delFlg: false,
@@ -48,7 +49,6 @@ const handleGetBorrowed = async (skip, limit, month = null, year = null) => {
       .skip(skip)
       .limit(limit);
   }
-  const currentDate = new Date();
   const startOfNovember = new Date(year, month - 1, 1);
   const endOfNovember =
     month === 12 ? new Date(year + 1, 1, 1) : new Date(year, month, 1);
@@ -130,6 +130,7 @@ const handleGetReturned = async (skip, limit, month = null, year = null) => {
  * @returns {Promise<number>} number
  */
 const handleGetOverdueTotal = async (month, year) => {
+  const currentDate = new Date();
   if (!month || !year) {
     return await Loan.countDocuments({
       delFlg: false,
@@ -139,7 +140,6 @@ const handleGetOverdueTotal = async (month, year) => {
       ],
     });
   }
-  const currentDate = new Date();
   const startOfNovember = new Date(year, month - 1, 1);
   const endOfNovember =
     month === 12 ? new Date(year + 1, 1, 1) : new Date(year, month, 1);
@@ -162,6 +162,7 @@ const handleGetOverdueTotal = async (month, year) => {
  * @returns {Promise<Array>}
  */
 const handleGetOverdue = async (skip, limit, month = null, year = null) => {
+  const currentDate = new Date();
   if (!month || !year) {
     return await Loan.find({
       delFlg: false,
@@ -173,7 +174,6 @@ const handleGetOverdue = async (skip, limit, month = null, year = null) => {
       .skip(skip)
       .limit(limit);
   }
-  const currentDate = new Date();
   const startOfNovember = new Date(year, month - 1, 1);
   const endOfNovember =
     month === 12 ? new Date(year + 1, 1, 1) : new Date(year, month, 1);
