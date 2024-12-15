@@ -11,7 +11,7 @@ function responseHandler(res, body) {
         isNullBody = false
     }
     if(!isNullBody) {
-        res.status(200).json(body)
+        res.status(200).json({data: body});
         return;
     }
     res.status(404).json({message: "Not found"});
