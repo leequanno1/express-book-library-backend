@@ -86,6 +86,7 @@ class BookCopyController {
             const bookRecord = await Book.findById(bookId);
             const result = {
                 _id: copyRecord._id,
+                bookId: bookRecord._id,
                 title: bookRecord.title,
                 author: bookRecord.author,
                 year: bookRecord.year,
