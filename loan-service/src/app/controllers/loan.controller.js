@@ -11,6 +11,7 @@ const {
   handleGetOverdueTotal,
   handleGetOverdue,
 } = require("../services/loan.service");
+const loan = require("../models/loan");
 
 class LoanController {
   // router.get("/loans/get-borrowed-page", Controller.getBorrowedPage);
@@ -144,7 +145,7 @@ class LoanController {
 
   // router.get("/loans/get-all-total", Controller.getAllTotal)
   /**
-   * parma: {
+   * param: {
    *    month?: numeber,
    *    year?: number,
    * }

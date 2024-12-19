@@ -9,6 +9,8 @@ const UserRole = {
   READER: 3,
 };
 
+const { fileToFileName } = require("../services/image-uploader.service");
+
 function encodeHmacSha256(data, secret) {
   const hmac = crypto.createHmac("sha256", secret);
   hmac.update(data);
@@ -95,7 +97,7 @@ class AuthenControllers {
   async login(req, res) {
     const { username, password } = req.body;
     const account = await User.find(
-      { username: username, password: encodeHmacSha256(password, secretKey) },
+      { username: username, password: encodeHmacSha256(password, secretKey), delFlg: false },
       "id username fullname roleId isActivated"
     );
     if (account.length) {
@@ -125,38 +127,57 @@ class AuthenControllers {
 
   // [PUT] /v3/update
   /**
-   * Body: { username: string, email: string , fullname: string, roleId: number, phoneNumber: string }
+   * Body: { 
+   *    username: string, 
+   *    email: string , 
+   *    fullname: string, 
+   *    roleId: number, 
+   *    phoneNumber: string,
+   *    imageFile: File
+   * }
+   * 
+   * trong trường hợp ảnh không đổi thì không cần truyền theo param imageFile
+   * ngoài ra các param khác phải truyền đầy đủ
+   * 
    * @param {*} req
    * @param {*} res
    */
   async update(req, res) {
     tokenValidation(req, res, async (req, res, payload) => {
-      const bodyData = filterNonNullProperties(req.body);
+      const { username, email, fullname, roleId, phoneNumber} = req.body;
       if (
-        payload.roleId === UserRole.ADMIN ||
-        payload.username === bodyData.username
-      ) {
-        // role admin
-        let updatedUser = await User.findOne({ username: bodyData.username });
-        if (!updatedUser) {
-          res.status(404).json({ message: "Not found" });
-          return;
+        payload.roleId === UserRole.ADMIN || 
+        payload.username === username
+      ){
+        let bodyData = {
+          email: email , 
+          fullname: fullname, 
+          roleId: roleId, 
+          phoneNumber: phoneNumber
         }
-        Object.assign(updatedUser, bodyData);
-        const user = new User({
-          fullname: updatedUser.fullname,
-          phoneNumber: updatedUser.phoneNumber,
-          roleId: updatedUser.roleId,
-          updatedAt: updatedUser.updatedAt,
-          isActivated: updatedUser.isActivated,
-          initDate: updatedUser.initDate,
-          delFlg: updatedUser.delFlg,
-          username: updatedUser.username,
-          password: updatedUser.password,
-          email: updatedUser.email,
-        });
-        updatedUser.save();
-        res.status(200).json(user);
+        if(req.files) {
+          let imageUrl = fileToFileName(req.files)[0];
+          bodyData = {
+            ...bodyData,
+            imageUrl: imageUrl
+          }
+        }
+        let result = await User.findOneAndUpdate({ username : username }, bodyData);
+        result = {
+          roleId: result.roleId,
+          imageUrl: result.imageUrl,
+          fullname: result.fullname,
+          phoneNumber: result.phoneNumber,
+          updatedAt: result.updatedAt,
+          isActivated: result.isActivated,
+          initDate: result.initDate,
+          delFlg: result.delFlg,
+          username: result.username,
+          password: result.password,
+          email: result.email,
+          ...bodyData
+        }
+        res.status(200).json({data: result});
       } else {
         res.status(403).json({ message: "Fobident" });
       }
@@ -346,6 +367,38 @@ class AuthenControllers {
     });
   }
 
+  // [POST] /v3/get-user-infos-by-usernames"
+  /**
+   * body {
+   *  usernames = string[],
+   * }
+   * @param {*} req 
+   * @param {*} res 
+   */
+  async getUserInfosByUsernames(req, res) {
+    tokenValidation(req, res, async (req, res, payload) => {
+      if (payload.roleId == UserRole.ADMIN || payload.roleId == UserRole.LIBRARIAN) {
+        const {usernames} = req.body;
+        if(!usernames || usernames.length === 0) {
+          res.status(404).json({message: "Not found"})
+          return;
+        }
+        try {
+          const records = await User.find({username : {$in : usernames}}).sort({fullname: -1});
+          if(!records || records.length === 0){
+            res.status(404).json({message: "Not found"})
+            return;
+          }
+          res.status(404).json({data: records});
+        } catch (error) {
+          res.status(500).json({message: error.message});
+        }
+      } else {
+        res.status(403).json({ message: "Fobident" });
+      }
+    });
+  }
+
   //  [GET] /v3/get-total
   async getTotalCount(req, res) {
     tokenValidation(req, res, async (req, res, payload) => {
@@ -385,6 +438,33 @@ class AuthenControllers {
       }
     });
   }
+
+  // [DELETE] "/v3/delete-accounts"
+  /**
+   * body {
+   *    usernames: string[]
+   * }
+   * 
+   * @param {*} req 
+   * @param {*} res 
+   */
+  async deleteAccounts(req, res) {
+    tokenValidation(req, res, async (req, res, payload) => {
+      const { usernames } = req.body;
+      if(payload.roleId === UserRole.ADMIN) {
+        if( !usernames || usernames.length === 0 ) {
+          res.status(404).json({ message: "Not found" });
+          return;
+        }
+        const records = await User.updateMany({username: {$in: usernames}}, {delFlg: true});
+        res.status(200).json({ data: `Delete succesfull id: ${usernames}` })
+      } else {
+        res.status(403).json({ message: "Fobident" });
+      }
+    });
+  }
 }
+
+
 
 module.exports = new AuthenControllers();

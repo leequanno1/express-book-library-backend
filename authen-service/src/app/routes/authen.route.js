@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const controller = require("../controllers/authen.controller");
+const { upload } = require("../services/image-uploader.service");
 
 /**
  * @swagger
@@ -117,6 +118,8 @@ router.post("/get-reader-infos", controller.getReaderInfos)
 
 router.post("/find-user-infos-by-fullname", controller.findUserInfosByFullName)
 
+router.post("/get-user-infos-by-usernames", controller.getUserInfosByUsernames)
+
 /**
  * @swagger
  * /v3/update:
@@ -170,7 +173,7 @@ router.post("/find-user-infos-by-fullname", controller.findUserInfosByFullName)
  *                   type: string
  *                   example: mymail@gmail.com
  */
-router.put("/update", controller.update);
+router.put("/update", upload.array("imageFile",1), controller.update);
 
 /**
  * @swagger
@@ -250,6 +253,8 @@ router.put("/change-password", controller.changePassword);
  */
 router.get("/get-info", controller.getAccountInfo);
 
-router.get("/get-total", controller.getTotalCount)
+router.get("/get-total", controller.getTotalCount);
+
+router.delete("/delete-accounts", controller.deleteAccounts);
 
 module.exports = router;

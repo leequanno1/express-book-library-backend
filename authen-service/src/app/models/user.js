@@ -13,6 +13,7 @@ const User = new Schema({
     isActivated : {type: Boolean, default: false},
     initDate: {type: Date, default: new Date()},
     delFlg: {type: Boolean, default: false},
+    imageUrl: {type: String, default: ""},
 })
 
 module.exports = mongoose.model('User', User);

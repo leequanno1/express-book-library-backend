@@ -16,15 +16,15 @@ const handleGetBorrowedTotal = async (month = null, year = null) => {
       dueDate: { $lt: currentDate },
     });
   }
-  const startOfNovember = new Date(year, month - 1, 1);
-  const endOfNovember =
+  const startOfMonth = new Date(year, month - 1, 1);
+  const endOfMonth =
     month === 12 ? new Date(year + 1, 1, 1) : new Date(year, month, 1);
   return await Loan.countDocuments({
     delFlg: false,
     status: LoanStatuses.BORROWED,
     loanDate: {
-      $gte: startOfNovember,
-      $lt: endOfNovember,
+      $gte: startOfMonth,
+      $lt: endOfMonth,
     },
     dueDate: { $lt: currentDate },
   });
@@ -49,15 +49,15 @@ const handleGetBorrowed = async (skip, limit, month = null, year = null) => {
       .skip(skip)
       .limit(limit);
   }
-  const startOfNovember = new Date(year, month - 1, 1);
-  const endOfNovember =
+  const startOfMonth = new Date(year, month - 1, 1);
+  const endOfMonth =
     month === 12 ? new Date(year + 1, 1, 1) : new Date(year, month, 1);
   return await Loan.find({
     delFlg: false,
     status: LoanStatuses.BORROWED,
     loanDate: {
-      $gte: startOfNovember,
-      $lt: endOfNovember,
+      $gte: startOfMonth,
+      $lt: endOfMonth,
     },
     dueDate: { $lt: currentDate },
   })
@@ -78,15 +78,15 @@ const handleGetReturnedTotal = async (month, year) => {
       status: LoanStatuses.RETURNED,
     });
   }
-  const startOfNovember = new Date(year, month - 1, 1);
-  const endOfNovember =
+  const startOfMonth = new Date(year, month - 1, 1);
+  const endOfMonth =
     month === 12 ? new Date(year + 1, 1, 1) : new Date(year, month, 1);
   return await Loan.countDocuments({
     delFlg: false,
     status: LoanStatuses.BORROWED,
     loanDate: {
-      $gte: startOfNovember,
-      $lt: endOfNovember,
+      $gte: startOfMonth,
+      $lt: endOfMonth,
     },
   });
 };
@@ -108,15 +108,15 @@ const handleGetReturned = async (skip, limit, month = null, year = null) => {
       .skip(skip)
       .limit(limit);
   }
-  const startOfNovember = new Date(year, month - 1, 1);
-  const endOfNovember =
+  const startOfMonth = new Date(year, month - 1, 1);
+  const endOfMonth =
     month === 12 ? new Date(year + 1, 1, 1) : new Date(year, month, 1);
   return await Loan.find({
     delFlg: false,
     status: LoanStatuses.BORROWED,
     loanDate: {
-      $gte: startOfNovember,
-      $lt: endOfNovember,
+      $gte: startOfMonth,
+      $lt: endOfMonth,
     },
   })
     .skip(skip)
@@ -140,14 +140,14 @@ const handleGetOverdueTotal = async (month, year) => {
       ],
     });
   }
-  const startOfNovember = new Date(year, month - 1, 1);
-  const endOfNovember =
+  const startOfMonth = new Date(year, month - 1, 1);
+  const endOfMonth =
     month === 12 ? new Date(year + 1, 1, 1) : new Date(year, month, 1);
   return await Loan.countDocuments({
     delFlg: false,
     loanDate: {
-      $gte: startOfNovember,
-      $lt: endOfNovember,
+      $gte: startOfMonth,
+      $lt: endOfMonth,
     },
     $or: [{ status: LoanStatuses.OVERDUE }, { dueDate: { $gte: currentDate } }],
   });
@@ -174,14 +174,14 @@ const handleGetOverdue = async (skip, limit, month = null, year = null) => {
       .skip(skip)
       .limit(limit);
   }
-  const startOfNovember = new Date(year, month - 1, 1);
-  const endOfNovember =
+  const startOfMonth = new Date(year, month - 1, 1);
+  const endOfMonth =
     month === 12 ? new Date(year + 1, 1, 1) : new Date(year, month, 1);
   return await Loan.find({
     delFlg: false,
     loanDate: {
-      $gte: startOfNovember,
-      $lt: endOfNovember,
+      $gte: startOfMonth,
+      $lt: endOfMonth,
     },
     $or: [{ status: LoanStatuses.OVERDUE }, { dueDate: { $gte: currentDate } }],
   })

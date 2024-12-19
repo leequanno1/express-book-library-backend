@@ -14,6 +14,6 @@ router.get("/get-overdue-page", Controller.getOverduePage);
 
 router.get("/get-overdue-total", Controller.getOverdueTotal);
 
-router.get("/get-all-total", Controller.getAllTotal)
+router.get("/get-all-total", Controller.getAllTotal);
 
 module.exports = router;
