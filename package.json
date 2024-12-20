@@ -1,0 +1,13 @@
+{
+  "name": "book-store",
+  "version": "1.0.0",
+  "scripts": {
+    "start:auth-service": "cd authen-service && npm start",
+    "start:book-service": "cd book-service && npm start",
+    "start:loan-service": "cd loan-service && npm start",
+    "start": "concurrently \"npm run start:auth-service\" \"npm run start:book-service\" \"npm run start:loan-service\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
