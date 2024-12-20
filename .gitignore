@@ -1,3 +1,4 @@
 **/public/**
 book-service/public/images/**
 *.jpg
+**/node_modules/**

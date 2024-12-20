@@ -33,8 +33,9 @@ class LoanCommandController {
       if (!bookInfo) {
         throw new Error("Copy id not exit");
       }
+      const currentDate = new Date();
       const dueDate = new Date();
-      dueDate.setDate(dueDate.getDate() + 7);
+      dueDate.setDate(currentDate.getDate() + 7);
       const loanData = {
         readerUsername: readerUsername,
         librarianUsername: librarianUsername,

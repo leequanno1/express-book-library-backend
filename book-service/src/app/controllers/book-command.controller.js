@@ -93,6 +93,8 @@ class BookCommandController {
       };
       const newBook = new Book(data);
       const result = await newBook.save();
+      let BookCategorys = result.categorys.map(cate => { cate.books += 1; return cate; });
+      await BookCategory.updateMany({ _id: { $in: objectIdList } }, BookCategorys);
       let bookCopys = [];
       for (let i = 0; i < newBook.totalCopies; i++) {
         bookCopys.push({
@@ -150,7 +152,13 @@ class BookCommandController {
           author : item.author,
           publisher : item.publisher,
           year : item.year, 
-          categorys : categories.filter(cate => item.categoryIds.includes(cate._id.toString())), 
+          categorys : categories.filter(cate => {
+            let rs = item.categoryIds.includes(cate._id.toString());
+            if(rs) {
+              cate.books += 1;
+            }
+            return rs;
+          }), 
           totalCopies : item.totalCopies,
           description : item.description,
           updatedAt : new Date(),
@@ -160,6 +168,7 @@ class BookCommandController {
       })
       // save book
       const bookRecords = await Book.insertMany(newBookData);
+      await BookCategory.updateMany({ _id: { $in: uniqueCategoryIds } }, categories);
       // create book copies
       let bookCopyData = [];
       bookRecords.forEach(book => {

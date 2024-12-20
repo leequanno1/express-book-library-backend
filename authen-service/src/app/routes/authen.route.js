@@ -257,4 +257,6 @@ router.get("/get-total", controller.getTotalCount);
 
 router.delete("/delete-accounts", controller.deleteAccounts);
 
+router.post("/activate-account", controller.activateAccount);
+
 module.exports = router;

@@ -4,7 +4,16 @@ const Favorite = require("../models/favorite");
 const Book = require("../models/book");
 
 class FavoriteController {
-    // router.post("/post-set-as-favorite", Controller.setAsFavorite);
+    // [POST] "/favorite/post-set-as-favorite"
+    /**
+     * body: {
+     *   username: string,
+     *   bookId: string
+     * }
+     * @param {*} req 
+     * @param {*} res 
+     * @returns 
+     */
     async setAsFavorite(req, res) {
         let username = req.body.username;
         let bookId = req.body.bookId
@@ -24,7 +33,16 @@ class FavoriteController {
         return responseHandler(res, favorite);
     }
 
-    // router.post("/post-remove-favorite", Controller.removeFavorite);
+    // [POST] "/favorite/post-remove-favorite"
+    /**
+     * body: {
+     *   username: string,
+     *   bookId: string
+     * }
+     * @param {*} req 
+     * @param {*} res 
+     * @returns 
+     */
     async removeFavorite(req, res) {
         let username = req.body.username;
         let bookId = req.body.bookId

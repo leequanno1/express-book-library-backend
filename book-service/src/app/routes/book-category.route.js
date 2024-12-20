@@ -12,4 +12,6 @@ router.post("/post-get-by-ids", Controller.postGetByIds);
 
 router.get("/get-by-name", Controller.getByName);
 
+router.get("/get-large-amount-category", Controller.getLargeAmount);
+
 module.exports = router;
