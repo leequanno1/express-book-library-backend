@@ -210,6 +210,37 @@ class AuthenControllers {
     });
   }
 
+  //   [PUT] /v3/reset-password
+  /**
+   * body: {
+   *  email: string,
+   *  code: string,
+   *  newPassword: string
+   * }
+   * @param {*} req 
+   * @param {*} res 
+   */
+  async resetPassword(req, res) {
+    const { email, code, newPassword } = req.body;
+    try {
+      const validationCode = await Validation.findOne({email: email, code: code});
+      if(
+        validationCode
+        && (new Date() - validationCode.initDate < (5 * 60 * 1000))
+      ) {
+        // update password for user with email and new password
+        await User.findOneAndUpdate( {email: email}, {password: encodeHmacSha256(newPassword, secretKey)});
+        // delete validation code
+        await Validation.deleteOne({ email: email, code: code });
+        res.status(200).json({ message: "Reset password successfuly" });
+      } else {
+        res.status(404).json({ message: "Validation code not found or expired." });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error." });
+    }
+  }
+
   //   [GET] /v3/get-info
   /**
    * Get current user info
@@ -484,7 +515,7 @@ class AuthenControllers {
 
   // [POST] "/v3/activate-account"
   /**
-   * param: {
+   * body: {
    *   code: string
    * }
    * @param {*} req
@@ -517,6 +548,8 @@ class AuthenControllers {
           imageUrl: payload.imageUrl,
         }
         let token = jwt.sign(newPayload, secretKey, { expiresIn: "1h" });
+        // delete validation code
+        await Validation.deleteOne({ email: email, code: code });
         res.status(200).json({ token: token });
       } else {
         res.status(404).json({ message: "Not found" });

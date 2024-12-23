@@ -14,7 +14,6 @@ class MailController {
     const { email } = req.query;
     try {
       const code = await handleSendActiceCodeMail(email);
-      console.log(code);
       await ValidationCode.deleteMany({ email: email });
       const validationCode = new ValidationCode({
         email: email,

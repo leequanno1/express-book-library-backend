@@ -215,6 +215,8 @@ router.put("/update", upload.array("imageFile",1), controller.update);
 */
 router.put("/change-password", controller.changePassword);
 
+router.put("/reset-password", controller.resetPassword);
+
 /**
  * @swagger
  * /v3/get-info:
