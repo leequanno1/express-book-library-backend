@@ -193,7 +193,7 @@ class BookCommandController {
   // [DELETE] /books-command/delete
   /**
    * body {
-   *  ids: string
+   *  ids: string[]
    * }
    * @param {*} req 
    * @param {*} res 
@@ -209,6 +209,10 @@ class BookCommandController {
       const result = await Book.updateMany(
         { _id: { $in: objectIdList } }, 
         { $set: { delFlg: true } } 
+      );
+      await BookCopy.updateMany(
+        { bookId: { $in: objectIdList } },
+        { $set: { delFlg: true } }
       );
       resHandler(res, { message: `Delete document successfully! Id: ${ids}.` });
     } catch (err) {

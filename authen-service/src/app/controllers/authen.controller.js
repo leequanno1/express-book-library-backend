@@ -17,6 +17,7 @@ function encodeHmacSha256(data, secret) {
   return hmac.digest("hex");
 }
 
+// Bearer token
 async function tokenValidation(req, res, callback) {
   const token = req.header("Authorization")?.split(" ")[1];
   if (!token) {
@@ -35,16 +36,20 @@ async function tokenValidation(req, res, callback) {
   });
 }
 
-const filterNonNullProperties = (obj) => {
-  return Object.fromEntries(
-    Object.entries(obj).filter(([key, value]) => value !== null)
-  );
-};
+// const filterNonNullProperties = (obj) => {
+//   return Object.fromEntries(
+//     Object.entries(obj).filter(([key, value]) => value !== null)
+//   );
+// };
 
 class AuthenControllers {
   // [POST] /v3/register
   /**
-   * Body: {userInfoList = [{username: string, email: string , fullname: string, roleId: number, phoneNumber: string }]}
+   * Body: {
+   *   userInfoList = [
+   *        {username: string, email: string , fullname: string, roleId: number, phoneNumber: string }
+   *    ]
+   * }
    * @param {*} req
    * @param {*} res
    * @returns
@@ -185,7 +190,7 @@ class AuthenControllers {
         };
         res.status(200).json({ data: result });
       } else {
-        res.status(403).json({ message: "Fobident" });
+        res.status(403).json({ message: "Forbidden" });
       }
     });
   }
