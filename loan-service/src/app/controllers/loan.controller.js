@@ -14,7 +14,7 @@ const {
 const loan = require("../models/loan");
 
 class LoanController {
-  // router.get("/loans/get-borrowed-page", Controller.getBorrowedPage);
+  // [GET]"/loans/get-borrowed-page"
   /**
    * param : {
    *    page: number,
@@ -38,7 +38,7 @@ class LoanController {
     }
   }
 
-  // router.get("/loans/get-borrowed-total", Controller.getBorrowedTotal);
+  // [GET]"/loans/get-borrowed-total"
   /**
    * param: {
    *    month?: numeber,
@@ -57,7 +57,7 @@ class LoanController {
     }
   }
 
-  // router.get("/loans/get-return-page", Controller.getReturnPage);
+  // [GET]"/loans/get-return-page"
   /**
    * param : {
    *    page: number,
@@ -81,7 +81,7 @@ class LoanController {
     }
   }
 
-  // router.get("/loans/get-return-total", Controller.getReturnTotal);
+  // [GET]"/loans/get-return-total"
   /**
    * param: {
    *    month?: numeber,
@@ -100,7 +100,7 @@ class LoanController {
     }
   }
 
-  // router.get("/loans/get-overdue-page", Controller.getOverduePage);
+  // [GET]"/loans/get-overdue-page"
   /**
    * param : {
    *    page: number,
@@ -124,7 +124,7 @@ class LoanController {
     }
   }
 
-  // router.get("/loans/get-overdue-total", Controller.getOverdueTotal);
+  // [GET]"/loans/get-overdue-total"
   /**
    * param: {
    *    month?: numeber,
@@ -143,7 +143,7 @@ class LoanController {
     }
   }
 
-  // router.get("/loans/get-all-total", Controller.getAllTotal)
+  // [GET]"/loans/get-all-total"
   /**
    * param: {
    *    month?: numeber,

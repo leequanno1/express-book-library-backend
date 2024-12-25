@@ -37,7 +37,7 @@ class FavoriteController {
     /**
      * body: {
      *   username: string,
-     *   bookId: string
+     *   bookIds: string[]
      * }
      * @param {*} req 
      * @param {*} res 
@@ -45,18 +45,48 @@ class FavoriteController {
      */
     async removeFavorite(req, res) {
         let username = req.body.username;
-        let bookId = req.body.bookId
-        if(!username || !bookId) {
+        let bookIds = req.body.bookIds
+        if(!username || !bookIds || bookIds.length === 0) {
             return errorResponseHandler(res, "Missing required fields");
         }
+        bookIds = bookIds.map(id => mongoose.Types.ObjectId(id));
         let favorite = await Favorite.findOneAndDelete({
             username: username,
-            "book._id": mongoose.Types.ObjectId(bookId)
+            "book._id": {  $in: bookIds }
         });
         if(!favorite) {
             return errorResponseHandler(res, "Favorite not found");
         }
         return responseHandler(res, favorite);
+    }
+
+    // [POST] "/favorite/post-get-favorites"
+    /**
+     * body {
+     *  username: string
+     *  page: number,
+     *  limit: number,
+     * }
+     * @param {*} req 
+     * @param {*} res 
+     * @returns 
+     */
+    async getFavorites(req, res) {
+        let { username, page, limit } = req.body;
+        if(!page || page < 1) page = 1;
+        if(!limit || limit < 1) limit = 1;
+        const skip = (page - 1) * limit;
+        if(!username) {
+            return errorResponseHandler(res, "Missing required fields");
+        }
+        let favorites = await Favorite.find({
+            username: username,
+            delFlg: false
+        })
+        .skip(skip)
+        .limit(limit)
+        .sort({initDate: -1});
+        return responseHandler(res, favorites);
     }
 }
 

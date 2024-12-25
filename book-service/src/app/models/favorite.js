@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const Favorite = new Schema({
     username: {type: String, default: ""},
     book: {type: Object, default: {
+        _id: undefined,
         title: undefined,
         author: undefined,
         publisher: undefined,

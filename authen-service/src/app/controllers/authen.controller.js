@@ -256,7 +256,7 @@ class AuthenControllers {
     tokenValidation(req, res, async (req, res, payload) => {
       const accountData = await User.findById(
         payload.id,
-        "_id username email fullname phoneNumber roleId isActivated"
+        "_id username email fullname phoneNumber roleId isActivated imageUrl"
       );
       if (accountData) {
         res.status(200).json(accountData);

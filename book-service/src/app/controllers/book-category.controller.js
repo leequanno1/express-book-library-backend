@@ -100,7 +100,7 @@ class BookCategoryController {
     }
   }
 
-  // router.get("/get-large-amount-category", Controller.getLargeAmount);
+  // [GET] "/book-categories/get-large-amount-category"
   /**
    * param {
    *  limit: number

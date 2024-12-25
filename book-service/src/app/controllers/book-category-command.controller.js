@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 
 class BookCategoryCommandController {
-    // router.put("put-update", Controller.updateCategory);
+    // [PUT] "/book-categories-command/put-update"
     /**
      * body {
      *  id: string,
@@ -30,7 +30,7 @@ class BookCategoryCommandController {
         }
     }
     
-    // router.post("post-create", Controller.createCategorys);
+    // [POST] "/book-categories-command/post-create"
     /**
      * body {
      *  categoryNames: string[]
@@ -60,7 +60,7 @@ class BookCategoryCommandController {
         }
     }
     
-    // router.delete("delete-delete", Controller.deleteCategorys)
+    // [DELETE] "/book-categories-command/delete-delete"
     /**
      * body {
      *  categoryIds: string[]

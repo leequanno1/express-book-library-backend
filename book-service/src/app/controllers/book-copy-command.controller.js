@@ -7,7 +7,7 @@ const BookCopy = require("../models/book-copy");
 const { BookStatuses } = require("../models/enums/book-status");
 
 class BookCopyCommandController {
-  // router.post("/post-borrow", Controller.borrowCopy);
+  // [POST] "/book-copy-command/post-borrow"
   /**
    * param {
    *    copyId: string
@@ -37,7 +37,7 @@ class BookCopyCommandController {
     }
   }
 
-  // router.post("/post-return", Controller.returnCopy);
+  // [POST] "/book-copy-command/post-return"
   /**
    * param {
    *    copyId: string
