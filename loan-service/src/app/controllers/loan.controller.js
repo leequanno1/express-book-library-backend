@@ -17,8 +17,6 @@ class LoanController {
   // [GET]"/loans/get-borrowed-page"
   /**
    * param : {
-   *    page: number,
-   *    limit: number,
    *    month: number,
    *    year: number,
    * }
@@ -26,12 +24,9 @@ class LoanController {
    * @param {*} res
    */
   async getBorrowedPage(req, res) {
-    let { page, limit, month, year } = req.query;
-    if (!page || page === 0) page = 1;
-    if (!limit || limit === 0) limit = 1;
-    const skip = (page - 1) * limit;
+    let { month, year } = req.query;
     try {
-      const records = await handleGetBorrowed(skip, limit, month, year);
+      const records = await handleGetBorrowed(month, year);
       responseHandler(res, records);
     } catch (error) {
       errorResponseHandler(res, error);
@@ -60,8 +55,6 @@ class LoanController {
   // [GET]"/loans/get-return-page"
   /**
    * param : {
-   *    page: number,
-   *    limit: number,
    *    month: number,
    *    year: number,
    * }
@@ -69,12 +62,9 @@ class LoanController {
    * @param {*} res
    */
   async getReturnPage(req, res) {
-    let { page, limit, month, year } = req.query;
-    if (!page || page === 0) page = 1;
-    if (!limit || limit === 0) limit = 1;
-    const skip = (page - 1) * limit;
+    let { month, year } = req.query;
     try {
-      const records = await handleGetReturned(skip, limit, month, year);
+      const records = await handleGetReturned(month, year);
       responseHandler(res, records);
     } catch (error) {
       errorResponseHandler(res, error);
@@ -103,8 +93,6 @@ class LoanController {
   // [GET]"/loans/get-overdue-page"
   /**
    * param : {
-   *    page: number,
-   *    limit: number,
    *    month: number,
    *    year: number,
    * }
@@ -112,12 +100,9 @@ class LoanController {
    * @param {*} res
    */
   async getOverduePage(req, res) {
-    let { page, limit, month, year } = req.query;
-    if (!page || page === 0) page = 1;
-    if (!limit || limit === 0) limit = 1;
-    const skip = (page - 1) * limit;
+    let { month, year } = req.query;
     try {
-      const records = await handleGetOverdue(skip, limit, month, year);
+      const records = await handleGetOverdue(month, year);
       responseHandler(res, records);
     } catch (error) {
       errorResponseHandler(res, error);

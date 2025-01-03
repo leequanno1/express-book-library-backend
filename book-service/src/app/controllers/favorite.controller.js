@@ -64,18 +64,13 @@ class FavoriteController {
     /**
      * body {
      *  username: string
-     *  page: number,
-     *  limit: number,
      * }
      * @param {*} req 
      * @param {*} res 
      * @returns 
      */
     async getFavorites(req, res) {
-        let { username, page, limit } = req.body;
-        if(!page || page < 1) page = 1;
-        if(!limit || limit < 1) limit = 1;
-        const skip = (page - 1) * limit;
+        let { username } = req.body;
         if(!username) {
             return errorResponseHandler(res, "Missing required fields");
         }
@@ -83,8 +78,6 @@ class FavoriteController {
             username: username,
             delFlg: false
         })
-        .skip(skip)
-        .limit(limit)
         .sort({initDate: -1});
         return responseHandler(res, favorites);
     }

@@ -17,8 +17,6 @@ class LoanForReaderController {
   /**
    * param : {
    *    readerUsername: string
-   *    page: number,
-   *    limit: number,
    *    month: number,
    *    year: number,
    * }
@@ -26,12 +24,9 @@ class LoanForReaderController {
    * @param {*} res
    */
   async getBorrowedPage(req, res) {
-    let {readerUsername, page, limit, month, year } = req.query;
-    if (!page || page === 0) page = 1;
-    if (!limit || limit === 0) limit = 1;
-    const skip = (page - 1) * limit;
+    let {readerUsername, month, year } = req.query;
     try {
-      const records = await handleGetBorrowed(readerUsername, skip, limit, month, year);
+      const records = await handleGetBorrowed(readerUsername, month, year);
       responseHandler(res, records);
     } catch (error) {
       errorResponseHandler(res, error);
@@ -62,8 +57,6 @@ class LoanForReaderController {
   /**
    * param : {
    *    readerUsername: string,
-   *    page: number,
-   *    limit: number,
    *    month: number,
    *    year: number,
    * }
@@ -71,12 +64,9 @@ class LoanForReaderController {
    * @param {*} res
    */
   async getReturnPage(req, res) {
-    let {readerUsername, page, limit, month, year } = req.query;
-    if (!page || page === 0) page = 1;
-    if (!limit || limit === 0) limit = 1;
-    const skip = (page - 1) * limit;
+    let {readerUsername, month, year } = req.query;
     try {
-      const records = await handleGetReturned(readerUsername, skip, limit, month, year);
+      const records = await handleGetReturned(readerUsername, month, year);
       responseHandler(res, records);
     } catch (error) {
       errorResponseHandler(res, error);
@@ -107,8 +97,6 @@ class LoanForReaderController {
   /**
    * param : {
    *    readerUsername: string,
-   *    page: number,
-   *    limit: number,
    *    month: number,
    *    year: number,
    * }
@@ -116,12 +104,9 @@ class LoanForReaderController {
    * @param {*} res
    */
   async getOverduePage(req, res) {
-    let { page, limit, month, year } = req.query;
-    if (!page || page === 0) page = 1;
-    if (!limit || limit === 0) limit = 1;
-    const skip = (page - 1) * limit;
+    let { readerUsername, month, year } = req.query;
     try {
-      const records = await handleGetOverdue(readerUsername, skip, limit, month, year);
+      const records = await handleGetOverdue(readerUsername, month, year);
       responseHandler(res, records);
     } catch (error) {
       errorResponseHandler(res, error);

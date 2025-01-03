@@ -29,23 +29,14 @@ class BookCategoryController {
 
   // [GET] "/book-categories/get-count"
   /**
-   * param {
-   *  page: number
-   *  limit: number
-   * }
+   * 
    * @param {*} req
    * @param {*} res
    */
   async getCount(req, res) {
-    let { page, limit } = req.query;
-    if (!page || page === 0) page = 1;
-    if (!limit || limit === 0) limit = 1;
-    const skip = (page - 1) * limit;
     try {
       const records = await BookCategory.find({})
         .sort({ categoryName: -1 })
-        .skip(skip)
-        .limit(limit);
       responseHandler(res, records);
     } catch (error) {
       errorResponseHandler(res, error);

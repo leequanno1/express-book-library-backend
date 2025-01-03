@@ -17,23 +17,14 @@ class BookController {
 
   // [GET] /books/get_count
   /**
-   * param {
-   *    page: number,
-   *    limit: number,
-   * }
+   * 
    * @param {*} req
    * @param {*} res
    */
   async getCount(req, res) {
-    let { page, limit } = req.query;
-    if (!page || page === 0) page = 1;
-    if (!limit || limit === 0) limit = 1;
-    const skip = (page - 1) * limit;
     try {
       const books = await Book.find({ delFlg: false })
         .sort({ initDate: -1 })
-        .skip(skip)
-        .limit(limit);
       resHandler(res, books);
     } catch (error) {
       errorHandler(res, error);

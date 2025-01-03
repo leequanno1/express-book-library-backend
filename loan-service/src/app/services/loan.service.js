@@ -32,22 +32,18 @@ const handleGetBorrowedTotal = async (month = null, year = null) => {
 
 /**
  *
- * @param {Number} skip
- * @param {Number} limit
  * @param {Number} month
  * @param {Number} year
  * @returns {Promise<Array>}
  */
-const handleGetBorrowed = async (skip, limit, month = null, year = null) => {
+const handleGetBorrowed = async (month = null, year = null) => {
   const currentDate = new Date();
   if (!month || !year) {
     return await Loan.find({
       delFlg: false,
       status: LoanStatuses.BORROWED,
       dueDate: { $lt: currentDate },
-    })
-      .skip(skip)
-      .limit(limit);
+    });
   }
   const startOfMonth = new Date(year, month - 1, 1);
   const endOfMonth =
@@ -60,9 +56,7 @@ const handleGetBorrowed = async (skip, limit, month = null, year = null) => {
       $lt: endOfMonth,
     },
     dueDate: { $lt: currentDate },
-  })
-    .skip(skip)
-    .limit(skip);
+  });
 };
 
 /**
@@ -93,20 +87,16 @@ const handleGetReturnedTotal = async (month, year) => {
 
 /**
  *
- * @param {Number} skip
- * @param {Number} limit
  * @param {Number} month
  * @param {Number} year
  * @returns {Promise<Array>}
  */
-const handleGetReturned = async (skip, limit, month = null, year = null) => {
+const handleGetReturned = async (month = null, year = null) => {
   if (!month || !year) {
     return await Loan.find({
       delFlg: false,
       status: LoanStatuses.RETURNED,
-    })
-      .skip(skip)
-      .limit(limit);
+    });
   }
   const startOfMonth = new Date(year, month - 1, 1);
   const endOfMonth =
@@ -118,9 +108,7 @@ const handleGetReturned = async (skip, limit, month = null, year = null) => {
       $gte: startOfMonth,
       $lt: endOfMonth,
     },
-  })
-    .skip(skip)
-    .limit(limit);
+  });
 };
 
 /**
@@ -155,13 +143,11 @@ const handleGetOverdueTotal = async (month, year) => {
 
 /**
  *
- * @param {Number} skip
- * @param {Number} limit
  * @param {Number} month
  * @param {Number} year
  * @returns {Promise<Array>}
  */
-const handleGetOverdue = async (skip, limit, month = null, year = null) => {
+const handleGetOverdue = async (month = null, year = null) => {
   const currentDate = new Date();
   if (!month || !year) {
     return await Loan.find({
@@ -170,9 +156,7 @@ const handleGetOverdue = async (skip, limit, month = null, year = null) => {
         { status: LoanStatuses.OVERDUE },
         { dueDate: { $gte: currentDate } },
       ],
-    })
-      .skip(skip)
-      .limit(limit);
+    });
   }
   const startOfMonth = new Date(year, month - 1, 1);
   const endOfMonth =
@@ -184,9 +168,7 @@ const handleGetOverdue = async (skip, limit, month = null, year = null) => {
       $lt: endOfMonth,
     },
     $or: [{ status: LoanStatuses.OVERDUE }, { dueDate: { $gte: currentDate } }],
-  })
-    .skip(skip)
-    .limit(limit);
+  });
 };
 
 module.exports = {

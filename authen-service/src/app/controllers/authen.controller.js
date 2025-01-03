@@ -231,7 +231,7 @@ class AuthenControllers {
       const validationCode = await Validation.findOne({email: email, code: code});
       if(
         validationCode
-        && (new Date() - validationCode.initDate < (5 * 60 * 1000))
+        // && (new Date() - validationCode.initDate < (5 * 60 * 1000))
       ) {
         // update password for user with email and new password
         await User.findOneAndUpdate( {email: email}, {password: encodeHmacSha256(newPassword, secretKey)});
@@ -268,22 +268,13 @@ class AuthenControllers {
 
   //  [POST] /v3/get-infos
   /**
-   * Body: { page: number, recordsPerPage: number }
    * @param {*} req
    * @param {*} res
    */
   async getUserInfos(req, res) {
     tokenValidation(req, res, async (req, res, payload) => {
       if (payload.roleId == UserRole.ADMIN) {
-        let { page, recordsPerPage } = req.body;
-        if (!page) page = 1;
-        if (!recordsPerPage) recordsPerPage = 1;
-        page = Math.max(1, page);
-        recordsPerPage = Math.max(1, recordsPerPage);
-        const skip = (page - 1) * recordsPerPage;
         const users = await User.find({ delFlg: false })
-          .skip(skip)
-          .limit(recordsPerPage)
           .sort({ updatedAt: -1 });
         res.status(200).json({ data: users });
       } else {
@@ -294,22 +285,13 @@ class AuthenControllers {
 
   // [POST] "/v3/get-infos"
   /**
-   * Body: { page: number, recordsPerPage: number }
    * @param {*} req
    * @param {*} res
    */
   async getAdminInfos(req, res) {
     tokenValidation(req, res, async (req, res, payload) => {
       if (payload.roleId == UserRole.ADMIN) {
-        let { page, recordsPerPage } = req.body;
-        if (!page) page = 1;
-        if (!recordsPerPage) recordsPerPage = 1;
-        page = Math.max(1, page);
-        recordsPerPage = Math.max(1, recordsPerPage);
-        const skip = (page - 1) * recordsPerPage;
         const users = await User.find({ roleId: UserRole.ADMIN, delFlg: false })
-          .skip(skip)
-          .limit(recordsPerPage)
           .sort({ updatedAt: -1 });
         res.status(200).json({ data: users });
       } else {
@@ -320,25 +302,16 @@ class AuthenControllers {
 
   // [POST] "/v3/get-infos"
   /**
-   * Body: { page: number, recordsPerPage: number }
    * @param {*} req
    * @param {*} res
    */
   async getLibrarianInfos(req, res) {
     tokenValidation(req, res, async (req, res, payload) => {
       if (payload.roleId == UserRole.ADMIN) {
-        let { page, recordsPerPage } = req.body;
-        if (!page) page = 1;
-        if (!recordsPerPage) recordsPerPage = 1;
-        page = Math.max(1, page);
-        recordsPerPage = Math.max(1, recordsPerPage);
-        const skip = (page - 1) * recordsPerPage;
         const users = await User.find({
           roleId: UserRole.LIBRARIAN,
           delFlg: false,
         })
-          .skip(skip)
-          .limit(recordsPerPage)
           .sort({ updatedAt: -1 });
         res.status(200).json({ data: users });
       } else {
@@ -349,25 +322,16 @@ class AuthenControllers {
 
   // [POST] "/v3/get-infos"
   /**
-   * Body: { page: number, recordsPerPage: number }
    * @param {*} req
    * @param {*} res
    */
   async getReaderInfos(req, res) {
     tokenValidation(req, res, async (req, res, payload) => {
       if (payload.roleId == UserRole.ADMIN) {
-        let { page, recordsPerPage } = req.body;
-        if (!page) page = 1;
-        if (!recordsPerPage) recordsPerPage = 1;
-        page = Math.max(1, page);
-        recordsPerPage = Math.max(1, recordsPerPage);
-        const skip = (page - 1) * recordsPerPage;
         const users = await User.find({
           roleId: UserRole.READER,
           delFlg: false,
         })
-          .skip(skip)
-          .limit(recordsPerPage)
           .sort({ updatedAt: -1 });
         res.status(200).json({ data: users });
       } else {
@@ -380,8 +344,6 @@ class AuthenControllers {
   /**
    * Body: {
    *  fullName: string,
-   *  page: number,
-   *  recordsPerPage: number
    * }
    * @param {*} req
    * @param {*} res
@@ -389,22 +351,15 @@ class AuthenControllers {
   async findUserInfosByFullName(req, res) {
     tokenValidation(req, res, async (req, res, payload) => {
       if (payload.roleId == UserRole.ADMIN) {
-        let { fullName, page, recordsPerPage } = req.body;
-        if (!page) page = 1;
-        if (!recordsPerPage) recordsPerPage = 1;
+        let { fullName} = req.body;
         if (!fullName || fullName === "") {
           res.status(400).json({ message: "Bad request" });
           return;
         }
-        page = Math.max(1, page);
-        recordsPerPage = Math.max(1, recordsPerPage);
-        const skip = (page - 1) * recordsPerPage;
         const users = await User.find({
           fullname: { $regex: fullName, $options: "i" },
           delFlg: false,
         })
-          .skip(skip)
-          .limit(recordsPerPage)
           .sort({ updatedAt: -1 });
         res.status(200).json({ data: users });
       } else {
@@ -539,8 +494,8 @@ class AuthenControllers {
       console.log(validationCode);
       // check if validationCode is not null and not expired after 5 minutes
       if (
-        validationCode &&
-        (new Date() - validationCode.initDate < 5 * 60 * 1000)
+        validationCode 
+        // && (new Date() - validationCode.initDate < 5 * 60 * 1000)
       ) {
         await User.findOneAndUpdate({ _id: id }, { isActivated: true });
         const newPayload = {

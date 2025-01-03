@@ -39,16 +39,12 @@ const handleGetBorrowedTotal = async (readerUsername, month = null, year = null)
 /**
  *
  * @param {String} readerUsername
- * @param {Number} skip
- * @param {Number} limit
  * @param {Number} month
  * @param {Number} year
  * @returns {Promise<Array>}
  */
 const handleGetBorrowed = async (
   readerUsername,
-  skip,
-  limit,
   month = null,
   year = null
 ) => {
@@ -62,9 +58,7 @@ const handleGetBorrowed = async (
       delFlg: false,
       status: LoanStatuses.BORROWED,
       dueDate: { $lt: currentDate },
-    })
-      .skip(skip)
-      .limit(limit);
+    });
   }
   const startOfNovember = new Date(year, month - 1, 1);
   const endOfNovember =
@@ -78,9 +72,7 @@ const handleGetBorrowed = async (
       $lt: endOfNovember,
     },
     dueDate: { $lt: currentDate },
-  })
-    .skip(skip)
-    .limit(skip);
+  });
 };
 
 /**
@@ -118,16 +110,12 @@ const handleGetReturnedTotal = async (readerUsername, month, year) => {
 /**
  *
  * @param {String} readerUsername
- * @param {Number} skip
- * @param {Number} limit
  * @param {Number} month
  * @param {Number} year
  * @returns {Promise<Array>}
  */
 const handleGetReturned = async (
   readerUsername,
-  skip,
-  limit,
   month = null,
   year = null
 ) => {
@@ -139,9 +127,7 @@ const handleGetReturned = async (
       readerUsername: readerUsername,
       delFlg: false,
       status: LoanStatuses.RETURNED,
-    })
-      .skip(skip)
-      .limit(limit);
+    });
   }
   const startOfNovember = new Date(year, month - 1, 1);
   const endOfNovember =
@@ -154,9 +140,7 @@ const handleGetReturned = async (
       $gte: startOfNovember,
       $lt: endOfNovember,
     },
-  })
-    .skip(skip)
-    .limit(limit);
+  });
 };
 
 /**
@@ -198,16 +182,12 @@ const handleGetOverdueTotal = async (readerUsername, month, year) => {
 /**
  *
  * @param {String} readerUsername
- * @param {Number} skip
- * @param {Number} limit
  * @param {Number} month
  * @param {Number} year
  * @returns {Promise<Array>}
  */
 const handleGetOverdue = async (
   readerUsername,
-  skip,
-  limit,
   month = null,
   year = null
 ) => {
@@ -223,9 +203,7 @@ const handleGetOverdue = async (
         { status: LoanStatuses.OVERDUE },
         { dueDate: { $gte: currentDate } },
       ],
-    })
-      .skip(skip)
-      .limit(limit);
+    });
   }
   const startOfNovember = new Date(year, month - 1, 1);
   const endOfNovember =
@@ -238,9 +216,7 @@ const handleGetOverdue = async (
       $lt: endOfNovember,
     },
     $or: [{ status: LoanStatuses.OVERDUE }, { dueDate: { $gte: currentDate } }],
-  })
-    .skip(skip)
-    .limit(limit);
+  });
 };
 
 module.exports = {
