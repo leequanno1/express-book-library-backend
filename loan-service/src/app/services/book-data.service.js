@@ -37,7 +37,6 @@ const getBookCopyInfo = async (req, copyId) => {
       `${BOOK_API_URL}/book-copy/get-copy-info?copyId=${copyId}`,
       {
         method: "GET",
-        headers: req.headers,
       }
     );
     if (data.status === 200) {
@@ -61,7 +60,10 @@ const handleBorrowBook = async (req, copyId) => {
       `${BOOK_API_URL}/book-copy-command/post-borrow`,
       {
         method: "POST",
-        headers: req.headers,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': req.headers.authorization,
+        },
         body: JSON.stringify({
           copyId: copyId,
         }),

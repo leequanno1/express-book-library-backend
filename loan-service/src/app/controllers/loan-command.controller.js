@@ -25,13 +25,16 @@ class LoanCommandController {
   async createLoan(req, res) {
     let { readerUsername, librarianUsername, copyId } = req.body;
     if (!readerUsername || !librarianUsername || !copyId) {
-      responseHandler(res, {});
+      responseHandler(res, null);
       return;
     }
     try {
       const bookInfo = (await getBookCopyInfo(req, copyId)).data;
       if (!bookInfo) {
         throw new Error("Copy id not exit");
+      }
+      if (bookInfo.status !== 1) {
+        throw new Error("Copy is not available");
       }
       const currentDate = new Date();
       const dueDate = new Date();
