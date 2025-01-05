@@ -57,7 +57,7 @@ const handleGetBorrowed = async (
       readerUsername: readerUsername,
       delFlg: false,
       status: LoanStatuses.BORROWED,
-      dueDate: { $lt: currentDate },
+      dueDate: { $gte: currentDate },
     });
   }
   const startOfNovember = new Date(year, month - 1, 1);
@@ -71,7 +71,7 @@ const handleGetBorrowed = async (
       $gte: startOfNovember,
       $lt: endOfNovember,
     },
-    dueDate: { $lt: currentDate },
+    dueDate: { $gte: currentDate },
   });
 };
 
@@ -201,7 +201,7 @@ const handleGetOverdue = async (
       delFlg: false,
       $or: [
         { status: LoanStatuses.OVERDUE },
-        { dueDate: { $gte: currentDate } },
+        { dueDate: { $lt: currentDate } },
       ],
     });
   }
@@ -215,7 +215,7 @@ const handleGetOverdue = async (
       $gte: startOfNovember,
       $lt: endOfNovember,
     },
-    $or: [{ status: LoanStatuses.OVERDUE }, { dueDate: { $gte: currentDate } }],
+    $or: [{ status: LoanStatuses.OVERDUE }, { dueDate: { $lt: currentDate } }],
   });
 };
 
